@@ -1,5 +1,5 @@
 //* TITLE Anti-Capitalism **//
-//* VERSION 1.5.2 **//
+//* VERSION 1.6.0 **//
 //* DESCRIPTION	Removes sponsored posts, vendor buttons, and other nonsense that wants your money. **//
 //* DEVELOPER new-xkit **//
 //* FRAME false **//
@@ -48,6 +48,11 @@ XKit.extensions.anti_capitalism = new Object({
 			text: "Hide the Sidebar Ads",
 			default: true,
 			value: true
+		},
+		rewrite_tracking_links: {
+			text: "Rewrite Tumblr's tracking links",
+			default: true,
+			value: true
 		}
 	},
 
@@ -92,8 +97,42 @@ XKit.extensions.anti_capitalism = new Object({
 				}
 			}, 400);
 		}
+
+		if (this.preferences.rewrite_tracking_links.value) {
+			XKit.post_listener.add("anti_capitalism", this.do_post_listener);
+		}
 	},
 
+	do_post_listener: function() {
+		if (!this.running) {
+			return;
+		}
+
+		var posts = XKit.interface.get_posts("anti_capitalism_done");
+		var startRegex = /^https?:\/\/t.umblr.com\/redirect/;
+		var redirectRegex = /[?&]z=([^&]+)/;
+
+		$(posts).each(function() {
+			var post = $(this);
+			post.addClass("anti_capitalism_done");
+
+			var links = post.find("a");
+			for (var i = 0; i < links.length; i++) {
+				var link = links[i];
+				if (!link.href) {
+					continue;
+				}
+				if (!link.href.match(startRegex)) {
+					continue;
+				}
+				var hrefMatches = link.href.match(redirectRegex);
+				if (!hrefMatches) {
+					continue;
+				}
+				link.href = decodeURIComponent(hrefMatches[1]);
+			}
+		});
+	},
 
 	destroy: function() {
 		this.running = false;
