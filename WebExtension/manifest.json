@@ -1,6 +1,7 @@
 {
    "content_scripts": [ {
       "all_frames": true,
+      "run_at": "document_end",
       "css": [ "xkit.css" ],
       "exclude_matches": [ "https://www.tumblr.com/upload/image*, http://www.tumblr.com/upload/image*" ],
       "js": [ "bridge.js", "jquery.js", "tiptip.js", "moment.js", "nano.js", "xkit.js" ],
@@ -16,6 +17,6 @@
    "name": "New XKit",
    "author": "New XKit Team",
    "permissions": ["*://*/*", "*://*/", "unlimitedStorage", "storage", "http://*.tumblr.com/", "https://*.tumblr.com/" ],
-   "version": "7.7.1",
+   "version": "7.8.0",
    "web_accessible_resources": [ "manifest.json", "editor.js" ]
 }
